@@ -65,6 +65,7 @@ venv.bak/
 config.yaml
 credentials.py
 tesla.token
+tesla_token.json
 
 # Logs
 *.log
