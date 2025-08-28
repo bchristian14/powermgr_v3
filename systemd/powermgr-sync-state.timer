@@ -1,0 +1,13 @@
+[Unit]
+Description=Power Manager State Sync Timer (Backup Node)
+Documentation=https://github.com/your-repo/powermgr
+Requires=powermgr-sync-state.service
+
+[Timer]
+# Sync state every 10 minutes
+OnCalendar=*:0/10
+Persistent=true
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target

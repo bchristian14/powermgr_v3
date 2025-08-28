@@ -1,0 +1,36 @@
+[Unit]
+Description=Power Manager Service
+Documentation=https://github.com/your-repo/powermgr
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/opt/powermgr
+ExecStart=/usr/bin/python3 /opt/powermgr/main.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=powermgr
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/mnt/ramdisk /var/log/powermgr
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+
+# Environment
+Environment=PYTHONPATH=/opt/powermgr
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

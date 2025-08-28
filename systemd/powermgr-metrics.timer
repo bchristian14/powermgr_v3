@@ -1,0 +1,13 @@
+[Unit]
+Description=Power Manager Daily Metrics Timer
+Documentation=https://github.com/your-repo/powermgr
+Requires=powermgr-metrics.service
+
+[Timer]
+# Run daily at 11:30 PM (after peak periods end)
+OnCalendar=*-*-* 23:30:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

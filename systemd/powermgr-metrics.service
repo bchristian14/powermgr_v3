@@ -1,0 +1,28 @@
+[Unit]
+Description=Power Manager Daily Metrics Processing
+Documentation=https://github.com/your-repo/powermgr
+After=network.target
+
+[Service]
+Type=oneshot
+User=pi
+Group=pi
+WorkingDirectory=/opt/powermgr
+ExecStart=/usr/bin/python3 /opt/powermgr/daily_metrics.py
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=powermgr-metrics
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/mnt/ramdisk /var/log/powermgr
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+
+# Environment
+Environment=PYTHONPATH=/opt/powermgr
+Environment=PYTHONUNBUFFERED=1

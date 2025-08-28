@@ -1,0 +1,1 @@
+"""Core power management logic."""

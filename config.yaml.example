@@ -1,0 +1,77 @@
+# Power Manager Configuration File
+# Copy this to config.yaml and update with your actual values
+
+tesla:
+  api_token: "YOUR_TESLA_TOKEN"
+  energy_site_id: "YOUR_ENERGY_SITE_ID"
+
+honeywell:
+  client_id: "YOUR_HONEYWELL_ID"
+  client_secret: "YOUR_HONEYWELL_SECRET"
+  username: "YOUR_HONEYWELL_USERNAME"
+  password: "YOUR_HONEYWELL_PASSWORD"
+
+weather:
+  api_key: "YOUR_WEATHER_API_KEY"  # For precool logic
+  api_url: "http://api.openweathermap.org/data/2.5/weather"
+
+settings:
+  holidays: ["2025-01-01", "2025-07-04", "2025-12-25"]
+  thermostat_increment_f: 2  # Degrees to raise thermostat per action
+  precool_adjustment_f: 2    # Degrees to lower for precooling
+  precool_threshold_f: 95    # Temp threshold to trigger precooling
+  location: "America/Phoenix"
+  check_interval_seconds: 300  # 5 minutes
+  eod_battery_warning_threshold: 20  # Percent
+  
+  # Season definitions
+  seasons:
+    summer:
+      months: [5, 6, 7, 8, 9, 10]  # May-Oct
+      peak_periods:
+        - { start: "16:00", end: "19:00" }
+    winter:
+      months: [11, 12, 1, 2, 3, 4]  # Nov-Apr
+      peak_periods:
+        - { start: "06:00", end: "09:00" }
+        - { start: "17:00", end: "20:00" }
+  
+  # Battery thresholds for thermostat adjustment during peak
+  battery_thresholds:
+    - { time_remaining_minutes: 120, level_percent: 75 }
+    - { time_remaining_minutes: 60, level_percent: 50 }
+    - { time_remaining_minutes: 30, level_percent: 25 }
+
+  # Thermostat IDs to control
+  thermostat_ids: 
+    - "THERMOSTAT_ID_1"
+    - "THERMOSTAT_ID_2"
+
+# File paths
+paths:
+  ramdisk_state_file: "/mnt/ramdisk/powermgr_state.json"
+  permanent_metrics_dir: "/var/log/powermgr/metrics/"
+
+# Notification settings
+notifications:
+  smtp:
+    server: "smtp.gmail.com"
+    port: 587
+    username: "your_email@gmail.com"
+    password: "your_app_password"
+  
+  recipients:
+    info: ["info@example.com"]
+    warning: ["warning@example.com", "admin@example.com"]
+    critical: ["critical@example.com", "admin@example.com", "emergency@example.com"]
+
+# High Availability (for keepalived integration)
+ha:
+  primary_node_ip: "192.168.1.100"
+  backup_node_ip: "192.168.1.101"
+  virtual_ip: "192.168.1.99"
+
+# Logging configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
