@@ -351,30 +351,3 @@ class TeslaAPI(BaseAPIClient):
         except Exception as e:
             self.logger.error(f"Failed to get operation mode: {str(e)}")
             raise
-
-
-def create_tesla_powerwall_api(config: Dict[str, Any]) -> TeslaAPI:
-    """
-    Factory function to create TeslaAPI instance from configuration.
-    
-    Expected config format:
-    {
-        "tesla": {
-            "token_file": "/path/to/tesla_token.json",
-            "energy_site_id": "12345",
-            "client_id": "your_client_id"  # optional, required for refresh
-        }
-    }
-    """
-    tesla_config = config.get('tesla', {})
-    
-    required_fields = ['token_file', 'energy_site_id']
-    for field in required_fields:
-        if field not in tesla_config:
-            raise ValueError(f"Tesla {field} must be specified in config")
-    
-    return TeslaAPI(
-        token_file_path=tesla_config['token_file'],
-        energy_site_id=tesla_config['energy_site_id'],
-        client_id=tesla_config.get('client_id')
-    )

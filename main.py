@@ -75,11 +75,12 @@ class PowerManagerService:
             self.logger = logging.getLogger('PowerManagerService')
             self.logger.info("Starting Power Manager Service")
             
-            # Initialize Tesla API client
+            # Initialize Tesla API client using the correct token file approach
             tesla_config = self.config['tesla']
             tesla_client = TeslaAPI(
-                api_token=tesla_config['api_token'],
-                energy_site_id=tesla_config['energy_site_id']
+                token_file_path=tesla_config['token_file'],
+                energy_site_id=tesla_config['energy_site_id'],
+                client_id=tesla_config.get('client_id')  # Optional for refresh
             )
             self.logger.info("Tesla API client initialized")
             
@@ -189,4 +190,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

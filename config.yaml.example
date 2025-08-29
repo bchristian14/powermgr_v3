@@ -7,8 +7,6 @@ tesla:
   client_id: "ownerapi"
 
 honeywell:
-  client_id: "YOUR_HONEYWELL_ID"
-  client_secret: "YOUR_HONEYWELL_SECRET"
   username: "YOUR_HONEYWELL_USERNAME"
   password: "YOUR_HONEYWELL_PASSWORD"
 
