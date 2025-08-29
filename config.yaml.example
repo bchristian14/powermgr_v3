@@ -2,8 +2,9 @@
 # Copy this to config.yaml and update with your actual values
 
 tesla:
-  api_token: "YOUR_TESLA_TOKEN"
+  token_file: "/path/to/tesla_token.json"
   energy_site_id: "YOUR_ENERGY_SITE_ID"
+  client_id: "ownerapi"
 
 honeywell:
   client_id: "YOUR_HONEYWELL_ID"
@@ -16,6 +17,7 @@ weather:
   api_url: "http://api.openweathermap.org/data/2.5/weather"
 
 settings:
+  dry_run: true     # toggle dryrun; dryrun does not perform modification actions
   holidays: ["2025-01-01", "2025-07-04", "2025-12-25"]
   thermostat_increment_f: 2  # Degrees to raise thermostat per action
   precool_adjustment_f: 2    # Degrees to lower for precooling
