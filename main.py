@@ -87,8 +87,6 @@ class PowerManagerService:
             # Initialize Honeywell API client
             honeywell_config = self.config['honeywell']
             honeywell_client = HoneywellAPI(
-                client_id=honeywell_config['client_id'],
-                client_secret=honeywell_config['client_secret'],
                 username=honeywell_config['username'],
                 password=honeywell_config['password']
             )

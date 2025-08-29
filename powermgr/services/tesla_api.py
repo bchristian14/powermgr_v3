@@ -179,7 +179,7 @@ class TeslaAPI(BaseAPIClient):
     def health_check(self) -> bool:
         """Check if Tesla API is accessible."""
         try:
-            response = self.get(f"/api/1/energy_sites/{self.energy_site_id}/status")
+            response = self.get(f"/api/1/energy_sites/{self.energy_site_id}/live_status")
             return response.status_code == 200
         except Exception as e:
             self.logger.warning(f"Tesla API health check failed: {str(e)}")
