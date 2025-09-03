@@ -5,11 +5,11 @@ After=network.target
 
 [Service]
 Type=oneshot
-User=pi
-Group=pi
+User=admin
+Group=admin
 # Sync state file from primary node
 # Replace PRIMARY_NODE_IP with actual IP from config
-ExecStart=/usr/bin/rsync -a --timeout=30 pi@PRIMARY_NODE_IP:/mnt/ramdisk/powermgr_state.json /mnt/ramdisk/
+ExecStart=/usr/bin/rsync -a --timeout=30 admin@PRIMARY_NODE_IP:/mnt/ramdisk/powermgr_state.json /mnt/ramdisk/
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=powermgr-sync

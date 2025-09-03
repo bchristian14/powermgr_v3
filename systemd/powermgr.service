@@ -7,10 +7,10 @@ StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-User=pi
-Group=pi
+User=admin
+Group=admin
 WorkingDirectory=/opt/powermgr
-ExecStart=/usr/bin/python3 /opt/powermgr/main.py
+ExecStart=/opt/powermgr/venv/bin/python3 /opt/powermgr/main.py
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=10

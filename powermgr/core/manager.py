@@ -8,7 +8,6 @@ from ..services.tesla_api import TeslaAPI
 from ..services.honeywell_api import HoneywellAPI
 from ..utils.metrics import MetricsRecorder
 from ..utils.notifications import NotificationManager
-import pytz
 
 
 class PowerManager:
@@ -44,8 +43,7 @@ class PowerManager:
         self.thermostat_ids = self.settings['thermostat_ids']
         self.battery_thresholds = self.settings['battery_thresholds']
         
-        # Set up timezone
-        self.timezone = pytz.timezone(self.settings['location'])
+        # Note: All datetime operations use system local timezone
         
         self.logger.info("PowerManager initialized successfully")
     
@@ -122,7 +120,7 @@ class PowerManager:
         Returns:
             str: Current phase (NON_PEAK, PRE_PEAK, PEAK_START, PEAK_MONITOR, PEAK_END)
         """
-        now = datetime.now(self.timezone)
+        now = datetime.now()
         current_date = now.date()
         current_time = now.time()
         
@@ -282,7 +280,7 @@ class PowerManager:
             int or None: Minutes remaining in peak period, None if not in peak
         """
         try:
-            now = datetime.now(self.timezone)
+            now = datetime.now()
             current_time = now.time()
             current_month = now.month
             

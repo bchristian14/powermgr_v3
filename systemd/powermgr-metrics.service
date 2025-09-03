@@ -5,10 +5,10 @@ After=network.target
 
 [Service]
 Type=oneshot
-User=pi
-Group=pi
+User=admin
+Group=admin
 WorkingDirectory=/opt/powermgr
-ExecStart=/usr/bin/python3 /opt/powermgr/daily_metrics.py
+ExecStart=/opt/powermgr/venv/bin/python3 /opt/powermgr/daily_metrics.py
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=powermgr-metrics
