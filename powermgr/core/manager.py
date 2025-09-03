@@ -35,6 +35,7 @@ class PowerManager:
         
         # Extract configuration values
         self.settings = config['settings']
+        self.dry_run = self.settings.get('dry_run', False)
         self.holidays = set(self.settings['holidays'])
         self.thermostat_increment = self.settings['thermostat_increment_f']
         self.precool_adjustment = self.settings['precool_adjustment_f']
@@ -42,6 +43,8 @@ class PowerManager:
         self.eod_battery_threshold = self.settings['eod_battery_warning_threshold']
         self.thermostat_ids = self.settings['thermostat_ids']
         self.battery_thresholds = self.settings['battery_thresholds']
+        self.max_thermostat_temp = self.settings.get('max_thermostat_temp_f', 82)
+        self.min_thermostat_temp = self.settings.get('min_thermostat_temp_f', 67)
         
         # Note: All datetime operations use system local timezone
         
@@ -171,7 +174,10 @@ class PowerManager:
             current_reserve = self.tesla.get_battery_reserve_setting()
             
             if current_reserve != 100:
-                self.tesla.set_reserve_percentage(100)
+                if self.dry_run:
+                    self.logger.info(f"DRY RUN: Would set Tesla battery reserve to 100% (currently {current_reserve}%)")
+                else:
+                    self.tesla.set_reserve_percentage(100)
                 self.metrics.record_action('set_battery_reserve', {
                     'previous_reserve': current_reserve,
                     'new_reserve': 100,
@@ -214,7 +220,10 @@ class PowerManager:
             
             # Set reserve to 0% during peak if not already set
             if current_reserve != 0:
-                self.tesla.set_reserve_percentage(0)
+                if self.dry_run:
+                    self.logger.info(f"DRY RUN: Would set Tesla battery reserve to 0% (currently {current_reserve}%)")
+                else:
+                    self.tesla.set_reserve_percentage(0)
                 self.metrics.record_action('set_battery_reserve', {
                     'previous_reserve': current_reserve,
                     'new_reserve': 0,
@@ -312,8 +321,12 @@ class PowerManager:
                 new_setpoint = current_setpoint + self.thermostat_increment
                 
                 # Safety check - don't set too high
-                if new_setpoint <= 85:  # Max reasonable indoor temperature
-                    success = self.honeywell.set_thermostat_cool_setpoint(thermostat_id, new_setpoint)
+                if new_setpoint <= self.max_thermostat_temp:
+                    if self.dry_run:
+                        self.logger.info(f"DRY RUN: Would adjust thermostat {thermostat_id}: {current_setpoint}°F → {new_setpoint}°F")
+                        success = True  # Simulate success for dry run
+                    else:
+                        success = self.honeywell.set_thermostat_cool_setpoint(thermostat_id, new_setpoint)
                     
                     if success:
                         self.metrics.record_action('adjust_thermostat', {
@@ -327,7 +340,7 @@ class PowerManager:
                     else:
                         self.logger.error(f"Failed to adjust thermostat {thermostat_id}")
                 else:
-                    self.logger.warning(f"Skipped thermostat {thermostat_id} - new setpoint {new_setpoint}°F too high")
+                    self.logger.warning(f"Skipped thermostat {thermostat_id} - new setpoint {new_setpoint}°F exceeds max temp {self.max_thermostat_temp}°F")
                     
             except Exception as e:
                 self.logger.error(f"Error adjusting thermostat {thermostat_id}: {str(e)}")
@@ -349,8 +362,12 @@ class PowerManager:
                     new_setpoint = current_setpoint - self.precool_adjustment
                     
                     # Safety check - don't set too low
-                    if new_setpoint >= 68:  # Min reasonable indoor temperature
-                        success = self.honeywell.set_thermostat_cool_setpoint(thermostat_id, new_setpoint)
+                    if new_setpoint >= self.min_thermostat_temp:
+                        if self.dry_run:
+                            self.logger.info(f"DRY RUN: Would precool thermostat {thermostat_id}: {current_setpoint}°F → {new_setpoint}°F")
+                            success = True  # Simulate success for dry run
+                        else:
+                            success = self.honeywell.set_thermostat_cool_setpoint(thermostat_id, new_setpoint)
                         
                         if success:
                             self.metrics.record_action('adjust_thermostat', {
@@ -364,7 +381,7 @@ class PowerManager:
                         else:
                             self.logger.error(f"Failed to precool thermostat {thermostat_id}")
                     else:
-                        self.logger.warning(f"Skipped precool thermostat {thermostat_id} - new setpoint {new_setpoint}°F too low")
+                        self.logger.warning(f"Skipped precool thermostat {thermostat_id} - new setpoint {new_setpoint}°F below min temp {self.min_thermostat_temp}°F")
                         
                 except Exception as e:
                     self.logger.error(f"Error precooling thermostat {thermostat_id}: {str(e)}")

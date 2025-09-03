@@ -20,6 +20,8 @@ settings:
   thermostat_increment_f: 2  # Degrees to raise thermostat per action
   precool_adjustment_f: 2    # Degrees to lower for precooling
   precool_threshold_f: 95    # Temp threshold to trigger precooling
+  max_thermostat_temp_f: 82  # Maximum thermostat setpoint (safety limit)
+  min_thermostat_temp_f: 67  # Minimum thermostat setpoint (safety limit)
   location: "America/Phoenix"
   check_interval_seconds: 300  # 5 minutes
   eod_battery_warning_threshold: 20  # Percent
