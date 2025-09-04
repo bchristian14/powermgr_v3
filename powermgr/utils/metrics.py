@@ -33,6 +33,7 @@ class MetricsRecorder:
                 "actions": [],
                 "battery_remaining": [],
                 "precooling": False,
+                "thermostat_adjustments_this_peak": 0,
                 "last_updated": datetime.now().isoformat()
             }
             self._save_state(default_state)
@@ -67,6 +68,7 @@ class MetricsRecorder:
                     "actions": [],
                     "battery_remaining": [],
                     "precooling": False,
+                    "thermostat_adjustments_this_peak": 0,
                     "last_updated": datetime.now().isoformat()
                 }
         except Exception as e:
@@ -76,6 +78,7 @@ class MetricsRecorder:
                 "actions": [],
                 "battery_remaining": [],
                 "precooling": False,
+                "thermostat_adjustments_this_peak": 0,
                 "last_updated": datetime.now().isoformat()
             }
     
@@ -214,6 +217,7 @@ class MetricsRecorder:
             "actions": [],
             "battery_remaining": [],
             "precooling": False,
+            "thermostat_adjustments_this_peak": 0,
             "last_updated": datetime.now().isoformat()
         }
         self._save_state(fresh_state)
