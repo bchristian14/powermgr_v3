@@ -2,7 +2,7 @@
 # Copy this to config.yaml and update with your actual values
 
 tesla:
-  token_file: "/path/to/tesla_token.json"
+  token_file: "/var/lib/powermgr/tesla_token.json"
   energy_site_id: "YOUR_ENERGY_SITE_ID"
   client_id: "ownerapi"
 
