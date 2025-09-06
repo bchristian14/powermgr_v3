@@ -282,7 +282,7 @@ class PowerManager:
             if adjustments_made < len(self.battery_thresholds):
                 threshold = self.battery_thresholds[adjustments_made]
                 
-                if time_remaining <= threshold['time_remaining_minutes']:
+                if time_remaining >= threshold['time_remaining_minutes']:
                     if battery_percent <= threshold['level_percent']:
                         self.logger.warning(f"Battery low (threshold {adjustments_made + 1}): {battery_percent}% with {time_remaining} minutes remaining")
                         return True
