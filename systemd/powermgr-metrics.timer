@@ -4,8 +4,11 @@ Documentation=https://github.com/your-repo/powermgr
 Requires=powermgr-metrics.service
 
 [Timer]
-# Run daily at 11:30 PM (after peak periods end)
-OnCalendar=*-*-* 23:30:00
+# Summer schedule (May-Oct): weekdays at 20:15
+# Winter schedule (Nov-Apr): weekdays at 09:15 and 21:15
+OnCalendar=May..Oct Mon..Fri 20:15:00
+OnCalendar=Nov..Apr Mon..Fri 09:15:00
+OnCalendar=Nov..Apr Mon..Fri 21:15:00
 Persistent=true
 RandomizedDelaySec=300
 
