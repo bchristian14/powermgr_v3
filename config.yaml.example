@@ -39,6 +39,8 @@ settings:
         - { start: "17:00", end: "20:00" }
   
   # Battery thresholds for thermostat adjustment during peak
+  # Maximum number of thermostat adjustments per peak period
+  max_thermostat_adjustments: 3
   battery_thresholds:
     - { time_remaining_minutes: 120, level_percent: 75 }
     - { time_remaining_minutes: 60, level_percent: 50 }

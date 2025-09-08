@@ -43,6 +43,7 @@ class PowerManager:
         self.eod_battery_threshold = self.settings['eod_battery_warning_threshold']
         self.thermostat_ids = self.settings['thermostat_ids']
         self.battery_thresholds = self.settings['battery_thresholds']
+        self.max_thermostat_adjustments = self.settings.get('max_thermostat_adjustments', 3)
         self.max_thermostat_temp = self.settings.get('max_thermostat_temp_f', 82)
         self.min_thermostat_temp = self.settings.get('min_thermostat_temp_f', 67)
         
@@ -254,6 +255,7 @@ class PowerManager:
     def _is_battery_low(self) -> bool:
         """
         Determine if battery level is low based on time remaining in peak period.
+        Uses progressive thresholds - only checks the next threshold based on adjustments already made.
         
         Returns:
             bool: True if battery is considered low for current conditions
@@ -268,11 +270,21 @@ class PowerManager:
             if time_remaining is None:
                 return False
             
-            # Check against configured thresholds
-            for threshold in self.battery_thresholds:
-                if time_remaining <= threshold['time_remaining_minutes']:
+            # Get current adjustment count from state
+            state = self.metrics.load_state()
+            adjustments_made = state.get('thermostat_adjustments_this_peak', 0)
+            
+            # Check if we've reached the maximum adjustments
+            if adjustments_made >= self.max_thermostat_adjustments:
+                return False
+            
+            # Only check the next threshold based on adjustments already made
+            if adjustments_made < len(self.battery_thresholds):
+                threshold = self.battery_thresholds[adjustments_made]
+                
+                if time_remaining >= threshold['time_remaining_minutes']:
                     if battery_percent <= threshold['level_percent']:
-                        self.logger.warning(f"Battery low: {battery_percent}% with {time_remaining} minutes remaining")
+                        self.logger.warning(f"Battery low (threshold {adjustments_made + 1}): {battery_percent}% with {time_remaining} minutes remaining")
                         return True
             
             return False
@@ -346,11 +358,18 @@ class PowerManager:
                 self.logger.error(f"Error adjusting thermostat {thermostat_id}: {str(e)}")
                 continue
         
+        # Increment adjustment counter
+        state = self.metrics.load_state()
+        state['thermostat_adjustments_this_peak'] = state.get('thermostat_adjustments_this_peak', 0) + 1
+        state['last_updated'] = datetime.now().isoformat()
+        self.metrics._save_state(state)
+        
         # Send notification
         self.notifications.notify('info', 'battery_adjusted', {
             'Thermostats Adjusted': len(self.thermostat_ids),
             'Adjustment': f"+{self.thermostat_increment}°F",
-            'Reason': 'Battery conservation during peak period'
+            'Reason': 'Battery conservation during peak period',
+            'Adjustment Number': state['thermostat_adjustments_this_peak']
         })
     
     def _activate_precooling(self) -> None:
